@@ -48,7 +48,7 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
-        from scrooge.contrib.django_scrooge import HUEY
+        from scrooge.contrib.django_scrooge import SCROOGE
 
         # Python 3.8+ on MacOS uses an incompatible multiprocess model. In this
         # case we must explicitly configure mp to use fork().
@@ -65,8 +65,8 @@ class Command(BaseCommand):
 
         consumer_options = {}
         try:
-            if isinstance(settings.HUEY, dict):
-                consumer_options.update(settings.HUEY.get("consumer", {}))
+            if isinstance(settings.SCROOGE, dict):
+                consumer_options.update(settings.SCROOGE.get("consumer", {}))
         except AttributeError:
             pass
 
@@ -92,5 +92,5 @@ class Command(BaseCommand):
         if not logger.handlers:
             config.setup_logger(logger)
 
-        consumer = HUEY.create_consumer(**config.values)
+        consumer = SCROOGE.create_consumer(**config.values)
         consumer.run()

@@ -14,7 +14,7 @@ except ImportError:
 from scrooge.tests.base import BaseTestCase
 from scrooge.tests.test_storage import StorageTests
 
-SQLHUEY_URL = os.environ.get("SQLHUEY_URL") or "sqlite:////tmp/scrooge-sqlite.db"
+SQLSCROOGE_URL = os.environ.get("SQLSCROOGE_URL") or "sqlite:////tmp/scrooge-sqlite.db"
 
 
 @unittest.skipIf(peewee is None, "requires peewee")
@@ -37,7 +37,7 @@ class TestSqlStorage(StorageTests, BaseTestCase):
             os.unlink(cls.db_file)
 
     def get_scrooge(self):
-        return SqlScrooge(database=SQLHUEY_URL, utc=False)
+        return SqlScrooge(database=SQLSCROOGE_URL, utc=False)
 
     def test_sql_scrooge_basic(self):
         @self.scrooge.task()

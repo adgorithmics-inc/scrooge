@@ -20,7 +20,7 @@ setting structure.
 The following example uses Redis on localhost, and will run four worker
 processes:
 
-HUEY = {
+SCROOGE = {
     'name': 'my-app',
     'connection': {'host': 'localhost', 'port': 6379},
     'consumer': {
@@ -32,11 +32,11 @@ HUEY = {
 If you would like to configure Scrooge's logger using Django's integrated logging
 settings, the logger used by consumer is named "scrooge".
 
-Alternatively you can simply assign `settings.HUEY` to an actual `Scrooge`
+Alternatively you can simply assign `settings.SCROOGE` to an actual `Scrooge`
 object instance:
 
 from scrooge import RedisScrooge
-HUEY = RedisScrooge('my-app')
+SCROOGE = RedisScrooge('my-app')
 """
 
 
@@ -66,8 +66,8 @@ def config_error(msg):
     sys.exit(1)
 
 
-HUEY = getattr(settings, "HUEY", None)
-if HUEY is None:
+SCROOGE = getattr(settings, "SCROOGE", None)
+if SCROOGE is None:
     try:
         RedisScrooge = get_backend(default_backend_path)
     except ImportError:
@@ -75,10 +75,10 @@ if HUEY is None:
             "Error: Scrooge could not import the redis backend. " "Install `redis-py`."
         )
     else:
-        HUEY = RedisScrooge(default_queue_name())
+        SCROOGE = RedisScrooge(default_queue_name())
 
-if isinstance(HUEY, dict):
-    scrooge_config = HUEY.copy()  # Operate on a copy.
+if isinstance(SCROOGE, dict):
+    scrooge_config = SCROOGE.copy()  # Operate on a copy.
     name = scrooge_config.pop("name", default_queue_name())
     if "backend_class" in scrooge_config:
         scrooge_config["scrooge_class"] = scrooge_config.pop("backend_class")
@@ -99,32 +99,32 @@ if isinstance(HUEY, dict):
             "Error: could not import Scrooge backend:\n%s" % traceback.format_exc()
         )
 
-    HUEY = backend_cls(name, **scrooge_config)
+    SCROOGE = backend_cls(name, **scrooge_config)
 
 # Function decorators.
-task = HUEY.task
-periodic_task = HUEY.periodic_task
-lock_task = HUEY.lock_task
+task = SCROOGE.task
+periodic_task = SCROOGE.periodic_task
+lock_task = SCROOGE.lock_task
 
 # Task management.
-enqueue = HUEY.enqueue
-restore = HUEY.restore
-restore_all = HUEY.restore_all
-restore_by_id = HUEY.restore_by_id
-revoke = HUEY.revoke
-revoke_all = HUEY.revoke_all
-revoke_by_id = HUEY.revoke_by_id
-is_revoked = HUEY.is_revoked
-result = HUEY.result
-scheduled = HUEY.scheduled
+enqueue = SCROOGE.enqueue
+restore = SCROOGE.restore
+restore_all = SCROOGE.restore_all
+restore_by_id = SCROOGE.restore_by_id
+revoke = SCROOGE.revoke
+revoke_all = SCROOGE.revoke_all
+revoke_by_id = SCROOGE.revoke_by_id
+is_revoked = SCROOGE.is_revoked
+result = SCROOGE.result
+scheduled = SCROOGE.scheduled
 
 # Hooks.
-on_startup = HUEY.on_startup
-on_shutdown = HUEY.on_shutdown
-pre_execute = HUEY.pre_execute
-post_execute = HUEY.post_execute
-signal = HUEY.signal
-disconnect_signal = HUEY.disconnect_signal
+on_startup = SCROOGE.on_startup
+on_shutdown = SCROOGE.on_shutdown
+pre_execute = SCROOGE.pre_execute
+post_execute = SCROOGE.post_execute
+signal = SCROOGE.signal
+disconnect_signal = SCROOGE.disconnect_signal
 
 
 def close_db(fn):
@@ -132,12 +132,12 @@ def close_db(fn):
 
     @wraps(fn)
     def inner(*args, **kwargs):
-        if not HUEY.immediate:
+        if not SCROOGE.immediate:
             close_old_connections()
         try:
             return fn(*args, **kwargs)
         finally:
-            if not HUEY.immediate:
+            if not SCROOGE.immediate:
                 close_old_connections()
 
     return inner
@@ -192,7 +192,7 @@ def on_commit_task(*args, **kwargs):
                 task_wrapper.scrooge.enqueue(task)
 
             transaction.on_commit(enqueue_on_commit)
-            return HUEY._result_handle(task)
+            return SCROOGE._result_handle(task)
 
         return inner
 

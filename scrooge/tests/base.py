@@ -16,7 +16,7 @@ class NullHandler(logging.Handler):
 logger = logging.getLogger("scrooge")
 logger.addHandler(NullHandler())
 
-TRAVIS = bool(os.environ.get("HUEY_TRAVIS"))
+TRAVIS = bool(os.environ.get("SCROOGE_TRAVIS"))
 
 
 class BaseTestCase(unittest.TestCase):

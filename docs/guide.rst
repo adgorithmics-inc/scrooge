@@ -754,6 +754,52 @@ server:
 
 .. code-block:: pycon
 
+    >>> from scrooge import RedisHuey
+    >>> huey = RedisHuey()
+    >>> huey.immediate = True
+
+    >>> @huey.task()
+    ... def add(a, b):
+    ...     return a + b
+    ...
+
+    >>> result = add(1, 2)
+    >>> result()
+    3
+
+    >>> add.revoke(revoke_once=True)  # We can revoke tasks.
+    >>> result = add(2, 3)
+    >>> result() is None
+    True
+
+    >>> add(3, 4)()  # No longer revoked, was restored automatically.
+    7
+
+What happens if we try to schedule a task for execution in the future, while
+using immediate mode?
+    >>> from scrooge import RedisHuey
+    >>> huey = RedisHuey()
+    >>> huey.immediate = True
+
+    >>> @huey.task()
+    ... def add(a, b):
+    ...     return a + b
+    ...
+
+    >>> result = add(1, 2)
+    >>> result()
+    3
+
+    >>> add.revoke(revoke_once=True)  # We can revoke tasks.
+    >>> result = add(2, 3)
+    >>> result() is None
+    True
+
+    >>> add(3, 4)()  # No longer revoked, was restored automatically.
+    7
+
+What happens if we try to schedule a task for execution in the future, while
+using immediate mode?
     >>> from huey import RedisHuey
     >>> huey = RedisHuey()
     >>> huey.immediate = True

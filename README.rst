@@ -1,17 +1,8 @@
-.. image:: http://media.charlesleifer.com/blog/photos/huey2-logo.png
+# Scrooge
 
-*a lightweight alternative*.
+Scrooge is a fork of the Huey project, modified to fit our needs.
 
-huey is:
-
-* a task queue
-* written in python
-* clean and simple API
-* redis, sqlite, file-system, or in-memory storage
-* `example code <https://github.com/coleifer/huey/tree/master/examples/>`_.
-* `read the documentation <https://huey.readthedocs.io/>`_.
-
-huey supports:
+scrooge supports:
 
 * multi-process, multi-thread or greenlet task execution models
 * schedule tasks to execute at a given time, or after a given delay
@@ -23,28 +14,26 @@ huey supports:
 * task locking
 * task pipelines and chains
 
-.. image:: http://i.imgur.com/2EpRs.jpg
-
 At a glance
 -----------
 
 .. code-block:: python
 
-    from huey import RedisHuey, crontab
+    from scrooge import RedisScrooge, crontab
 
-    huey = RedisHuey('my-app', host='redis.myapp.com')
+    scrooge = RedisScrooge('my-app', host='redis.myapp.com')
 
-    @huey.task()
+    @scrooge.task()
     def add_numbers(a, b):
         return a + b
 
-    @huey.task(retries=2, retry_delay=60)
+    @scrooge.task(retries=2, retry_delay=60)
     def flaky_task(url):
         # This task might fail, in which case it will be retried up to 2 times
         # with a delay of 60s between retries.
         return this_might_fail(url)
 
-    @huey.periodic_task(crontab(minute='0', hour='3'))
+    @scrooge.periodic_task(crontab(minute='0', hour='3'))
     def nightly_backup():
         sync_all_data()
 
@@ -70,8 +59,8 @@ Tasks can be scheduled to run in the future:
     >>> res(blocking=True)  # Will block until task finishes, in ~10s.
     5
 
-For much more, check out the `guide <https://huey.readthedocs.io/en/latest/guide.html>`_
-or take a look at the `example code <https://github.com/coleifer/huey/tree/master/examples/>`_.
+For much more, check out the `guide <https://scrooge.readthedocs.io/en/latest/guide.html>`_
+or take a look at the `example code <https://github.com/coleifer/scrooge/tree/master/examples/>`_.
 
 Running the consumer
 ^^^^^^^^^^^^^^^^^^^^
@@ -80,13 +69,13 @@ Run the consumer with four worker processes:
 
 .. code-block:: console
 
-    $ huey_consumer.py my_app.huey -k process -w 4
+    $ scrooge_consumer.py my_app.scrooge -k process -w 4
 
 To run the consumer with a single worker thread (default):
 
 .. code-block:: console
 
-    $ huey_consumer.py my_app.huey
+    $ scrooge_consumer.py my_app.scrooge
 
 If your work-loads are mostly IO-bound, you can run the consumer with threads
 or greenlets instead. Because greenlets are so lightweight, you can run quite a
@@ -94,34 +83,34 @@ few of them efficiently:
 
 .. code-block:: console
 
-    $ huey_consumer.py my_app.huey -k greenlet -w 32
+    $ scrooge_consumer.py my_app.scrooge -k greenlet -w 32
 
 Storage
 -------
 
-Huey's design and feature-set were informed by the capabilities of the
+Scrooge's design and feature-set were informed by the capabilities of the
 `Redis <https://redis.io>`_ database. Redis is a fantastic fit for a
-lightweight task queueing library like Huey: it's self-contained, versatile,
+lightweight task queueing library like Scrooge: it's self-contained, versatile,
 and can be a multi-purpose solution for other web-application tasks like
 caching, event publishing, analytics, rate-limiting, and more.
 
-Although Huey was designed with Redis in mind, the storage system implements a
+Although Scrooge was designed with Redis in mind, the storage system implements a
 simple API and many other tools could be used instead of Redis if that's your
 preference.
 
-Huey comes with builtin support for Redis, Sqlite and in-memory storage.
+Scrooge comes with builtin support for Redis, Sqlite and in-memory storage.
 
 Documentation
 ----------------
 
-`See Huey documentation <https://huey.readthedocs.io/>`_.
+`See Scrooge documentation <https://scrooge.readthedocs.io/>`_.
 
 Project page
 ---------------
 
-`See source code and issue tracker on Github <https://github.com/coleifer/huey/>`_.
+`See source code and issue tracker on Github <https://github.com/coleifer/scrooge/>`_.
 
-Huey is named in honor of my cat:
+Scrooge is named in honor of my cat:
 
 .. image:: http://m.charlesleifer.com/t/800x-/blog/photos/p1473037658.76.jpg?key=mD9_qMaKBAuGPi95KzXYqg
 

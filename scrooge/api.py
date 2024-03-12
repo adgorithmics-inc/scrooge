@@ -434,7 +434,7 @@ class Scrooge(object):
         start = time_clock()
         exception = None
         retry_eta = None
-        task_value = None
+        task_value = EmptyData
 
         try:
             self._tasks_in_flight.add(task)
@@ -483,7 +483,7 @@ class Scrooge(object):
             if exception is not None:
                 error_data = self.build_error_result(task, exception)
                 self.put_result(task.id, Error(error_data))
-            elif task_value is not None or self.store_none:
+            elif task_value is not EmptyData or self.store_none:
                 self.put_result(task.id, task_value)
 
         if self._post_execute:

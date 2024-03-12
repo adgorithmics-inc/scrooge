@@ -3,5 +3,5 @@ __pycache__
 *.pyc
 docs/_build
 venv/
-huey.egg-info/
+scrooge.egg-info/
 huey.db
